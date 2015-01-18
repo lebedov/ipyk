@@ -7,6 +7,16 @@ Package Description
 -------------------
 IPyk is a command line utility for managing locally run IPython kernels.
 
+Installation
+------------
+If you have `pip <http://www.pip-installer.org/>`_ installed, run::
+  
+    pip install ipyk
+
+You can also download the source tarball, unpack, and run::
+
+    python setup.py install
+
 Usage
 -----
 Start a new kernel using the default IPython profile: ::

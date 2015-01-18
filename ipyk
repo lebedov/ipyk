@@ -12,9 +12,12 @@ IPython local kernel management utility.
 import argparse
 import glob
 import os
-from Queue import Empty
 import time
 import IPython.kernel
+import six.moves
+import sys
+
+from six.moves.queue import Empty
 
 def wait_for_kernel(kc, timeout=None):
     # Adapted from IPython/terminal/console/interactiveshell.py in IPython source
@@ -55,33 +58,36 @@ if __name__ == '__main__':
     parser.add_argument('-k', '--kill', help='terminate kernel', type=int)
     parser.add_argument('-c', '--connect', help='connect to kernel', type=int)
     parser.add_argument('-l', '--list', help='list running kernels', action='store_true')
-    if os.environ.has_key('IPYTHONDIR'):
+    try:
         ipython_dir = os.environ['IPYTHONDIR']
-    else:
+    except:
         ipython_dir = '~/.ipython'
     ipython_dir = os.path.expanduser(ipython_dir)
 
     args = parser.parse_args()
     kf_dict = get_alive_kernels(ipython_dir)
     if args.list:
-        for k, v in kf_dict.iteritems():
-            print '%s: %s' % (k, v['file_name'])
+        for k, v in six.iteritems(kf_dict):
+            print('%s: %s' % (k, v['file_name']))
     elif args.connect is not None:
-        if not kf_dict.has_key(args.connect):
-            print 'must specify valid kernel number'
-        else:
+        try:
             os.execvp('ipython',
                       ['ipython', 'console', '--existing',
                        str(kf_dict[args.connect]['file_name'])])
+        except KeyError:
+            print('must specify valid kernel number')
+            sys.exit(1)
     elif args.start:
         os.spawnvp(os.P_NOWAIT, 'ipython', ['ipython', 'kernel'])
     elif args.kill is not None:
-        if not kf_dict.has_key(args.kill):
-            print 'must specify valid kernel number'
-        else:
+        try:
             msg_id = kf_dict[args.kill]['kc'].shutdown()
             reply = kf_dict[args.kill]['kc'].shell_channel.get_msg()
             if reply['content']['status'] == 'error':
-                print 'error terminating kernel'
+                print('error terminating kernel')
+                sys.exit(1)
+        except KeyError:
+            print('must specify valid kernel number')
+            sys.exit(1)
     else:
         parser.print_help()
