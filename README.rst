@@ -9,7 +9,7 @@ IPyk is a command line utility for managing locally run IPython kernels.
 
 Usage
 -----
-Start a new kernel: ::
+Start a new kernel using the default IPython profile: ::
     
     ipyk.py -s
 
