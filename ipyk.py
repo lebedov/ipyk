@@ -1,0 +1,87 @@
+#!/usr/bin/env python
+
+"""
+IPython local kernel management utility.
+"""
+
+# Copyright (c) 2015, Lev Givon
+# All rights reserved.
+# Distributed under the terms of the BSD license:
+# http://www.opensource.org/licenses/bsd-license
+
+import argparse
+import glob
+import os
+from Queue import Empty
+import time
+import IPython.kernel
+
+def wait_for_kernel(kc, timeout=None):
+    # Adapted from IPython/terminal/console/interactiveshell.py in IPython source
+    tic = time.time()
+    while True:
+        msg_id = kc.kernel_info()
+        reply = None
+        while True:
+            try:
+                reply = kc.get_shell_msg(timeout=1)
+            except Empty:
+                break
+            else:
+                if reply['parent_header'].get('msg_id') == msg_id:
+                    return True
+        if timeout is not None \
+           and (time.time()-tic) > timeout and not kc.hb_channel.is_beating():
+            return False
+    return True
+
+def get_alive_kernels(ipython_dir):
+    # Look for kernel files:
+    kernel_files = glob.glob(os.path.join(ipython_dir, '*', 'security', 'kernel*json'))
+    kf_dict = {}
+    for count, file_name in enumerate(kernel_files):
+        kc = IPython.kernel.BlockingKernelClient(connection_file=file_name)
+        kc.load_connection_file()
+        kc.start_channels()
+        kc.hb_channel.unpause()
+
+        if wait_for_kernel(kc, kc.hb_channel.time_to_dead+1.0):
+            kf_dict[count] = {'file_name': file_name, 'kc': kc}
+    return kf_dict
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Manage local IPython kernels.")
+    parser.add_argument('-s', '--start', help='start new kernel', action='store_true')
+    parser.add_argument('-k', '--kill', help='terminate kernel', type=int)
+    parser.add_argument('-c', '--connect', help='connect to kernel', type=int)
+    parser.add_argument('-l', '--list', help='list running kernels', action='store_true')
+    if os.environ.has_key('IPYTHONDIR'):
+        ipython_dir = os.environ['IPYTHONDIR']
+    else:
+        ipython_dir = '~/.ipython'
+    ipython_dir = os.path.expanduser(ipython_dir)
+
+    args = parser.parse_args()
+    kf_dict = get_alive_kernels(ipython_dir)
+    if args.list:
+        for k, v in kf_dict.iteritems():
+            print '%s: %s' % (k, v['file_name'])
+    elif args.connect is not None:
+        if not kf_dict.has_key(args.connect):
+            print 'must specify valid kernel number'
+        else:
+            os.execvp('ipython',
+                      ['ipython', 'console', '--existing', 
+                       str(kf_dict[args.connect]), '2>&1'])
+    elif args.start:
+        os.spawnvp(os.P_NOWAIT, 'ipython', ['ipython', 'kernel'])
+    elif args.kill is not None:
+        if not kf_dict.has_key(args.kill):
+            print 'must specify valid kernel number'
+        else:
+            msg_id = kf_dict[args.kill]['kc'].shutdown()
+            reply = kf_dict[args.kill]['kc'].shell_channel.get_msg()
+            if reply['content']['status'] == 'error':
+                print 'error terminating kernel'
+    else:
+        parser.print_help()
