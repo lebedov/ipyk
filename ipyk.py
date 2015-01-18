@@ -71,8 +71,8 @@ if __name__ == '__main__':
             print 'must specify valid kernel number'
         else:
             os.execvp('ipython',
-                      ['ipython', 'console', '--existing', 
-                       str(kf_dict[args.connect]), '2>&1'])
+                      ['ipython', 'console', '--existing',
+                       str(kf_dict[args.connect]['file_name'])])
     elif args.start:
         os.spawnvp(os.P_NOWAIT, 'ipython', ['ipython', 'kernel'])
     elif args.kill is not None:
