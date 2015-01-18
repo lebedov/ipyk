@@ -43,6 +43,10 @@ Terminate a running kernel: ::
 
     ipyk.py -k 0
 
+Author
+------
+See the included AUTHORS.rst file for more information.
+
 License
 -------
 This software is licensed under the
