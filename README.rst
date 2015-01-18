@@ -7,10 +7,10 @@ Package Description
 -------------------
 IPyk is a command line utility for managing locally run IPython kernels.
 
-.. image:: https://pypip.in/version/duster/badge.png
+.. image:: https://pypip.in/version/ipyk/badge.png
     :target: https://pypi.python.org/pypi/ipyk
     :alt: Latest Version
-.. image:: https://pypip.in/d/duster/badge.png
+.. image:: https://pypip.in/d/ipyk/badge.png
     :target: https://pypi.python.org/pypi/ipyk
     :alt: Downloads
 
