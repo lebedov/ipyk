@@ -28,20 +28,20 @@ Usage
 -----
 Start a new kernel using the default IPython profile: ::
     
-    ipyk.py -s
+    ipyk -s
 
 List running kernels: ::
 
-    ipyk.py -l
+    ipyk -l
     0: /home/lebedov/.ipython/profile_default/security/kernel-12345.json
 
 Connect to a running kernel: ::
 
-    ipyk.py -c 0
+    ipyk -c 0
 
 Terminate a running kernel: ::
 
-    ipyk.py -k 0
+    ipyk -k 0
 
 Author
 ------
