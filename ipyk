@@ -13,11 +13,21 @@ import argparse
 import glob
 import os
 import time
-import IPython.kernel
+from IPython.kernel import BlockingKernelClient
+from IPython.kernel.zmq.kernelapp import IPKernelApp
 import six.moves
 import sys
 
 from six.moves.queue import Empty
+
+class SilentIPKernelApp(IPKernelApp):
+    def log_connection_info(self):
+        # Suppress startup message:
+        self.ports = dict(shell=self.shell_port,
+            iopub=self.iopub_port,
+            stdin=self.stdin_port,
+            hb=self.hb_port,
+            control=self.control_port)
 
 def wait_for_kernel(kc, timeout=None):
     # Adapted from IPython/terminal/console/interactiveshell.py in IPython source
@@ -43,7 +53,7 @@ def get_alive_kernels(ipython_dir):
     kernel_files = glob.glob(os.path.join(ipython_dir, '*', 'security', 'kernel*json'))
     kf_dict = {}
     for count, file_name in enumerate(kernel_files):
-        kc = IPython.kernel.BlockingKernelClient(connection_file=file_name)
+        kc = BlockingKernelClient(connection_file=file_name)
         kc.load_connection_file()
         kc.start_channels()
         kc.hb_channel.unpause()
@@ -78,7 +88,14 @@ if __name__ == '__main__':
             print('must specify valid kernel number')
             sys.exit(1)
     elif args.start:
-        os.spawnvp(os.P_NOWAIT, 'ipython', ['ipython', 'kernel'])
+        pid = os.fork()
+        if pid == 0:
+            # Need to blank the arguments to prevent them from being used
+            # by the kernel app instance:
+            sys.argv[1:] = []
+            k = SilentIPKernelApp.instance()
+            k.initialize()
+            k.start()
     elif args.kill is not None:
         try:
             msg_id = kf_dict[args.kill]['kc'].shutdown()
