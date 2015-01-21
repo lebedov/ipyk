@@ -15,6 +15,7 @@ import os
 import time
 from IPython.kernel import BlockingKernelClient
 from IPython.kernel.zmq.kernelapp import IPKernelApp
+from setproctitle import setproctitle
 import six.moves
 import sys
 
@@ -90,6 +91,7 @@ if __name__ == '__main__':
     elif args.start:
         pid = os.fork()
         if pid == 0:
+            setproctitle('ipython kernel')
             # Need to blank the arguments to prevent them from being used
             # by the kernel app instance:
             sys.argv[1:] = []

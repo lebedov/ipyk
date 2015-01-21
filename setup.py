@@ -48,5 +48,7 @@ if __name__ == "__main__":
         long_description = LONG_DESCRIPTION,
         url = URL,
         scripts = ['ipyk'],
-        install_requires = ['ipython>=2.2.0', 'six'],
+        install_requires = ['ipython>=2.2.0',
+                            'setproctitle',
+                            'six'],
     )
