@@ -76,11 +76,12 @@ if __name__ == '__main__':
     ipython_dir = os.path.expanduser(ipython_dir)
 
     args = parser.parse_args()
-    kf_dict = get_alive_kernels(ipython_dir)
     if args.list:
+        kf_dict = get_alive_kernels(ipython_dir)
         for k, v in six.iteritems(kf_dict):
             print('%s: %s' % (k, v['file_name']))
     elif args.connect is not None:
+        kf_dict = get_alive_kernels(ipython_dir)
         try:
             os.execvp('ipython',
                       ['ipython', 'console', '--existing',
@@ -99,6 +100,7 @@ if __name__ == '__main__':
             k.initialize()
             k.start()
     elif args.kill is not None:
+        kf_dict = get_alive_kernels(ipython_dir)
         try:
             msg_id = kf_dict[args.kill]['kc'].shutdown()
             reply = kf_dict[args.kill]['kc'].shell_channel.get_msg()
