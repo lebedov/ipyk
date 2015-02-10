@@ -13,6 +13,7 @@ import argparse
 import glob
 import os
 import time
+from IPython import start_ipython
 from IPython.kernel import BlockingKernelClient
 from IPython.kernel.zmq.kernelapp import IPKernelApp
 from setproctitle import setproctitle
@@ -83,11 +84,11 @@ if __name__ == '__main__':
     elif args.connect is not None:
         kf_dict = get_alive_kernels(ipython_dir)
         try:
-            os.execvp('ipython',
-                      ['ipython', 'console', '--existing',
-                       str(kf_dict[args.connect]['file_name'])])
+            setproctitle('ipyk -c %s' % args.connect)
+            start_ipython(['console', '--existing',
+                          str(kf_dict[args.connect]['file_name'])])
         except KeyError:
-            print('must specify valid kernel number')
+            print('invalid kernel number')
             sys.exit(1)
     elif args.start:
         pid = os.fork()
