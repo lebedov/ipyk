@@ -75,9 +75,9 @@ if __name__ == '__main__':
                         metavar='KERNEL',
                         type=int)
     parser.add_argument('-c', '--connect',
-                        help='connect to kernel',
+                        help='connect to kernel (default=0)',
                         metavar='KERNEL',
-                        type=int)
+                        type=int, nargs='?', const=0)
     parser.add_argument('-l', '--list', help='list running kernels', action='store_true')
     try:
         ipython_dir = os.environ['IPYTHONDIR']
