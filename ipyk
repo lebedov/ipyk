@@ -66,9 +66,18 @@ def get_alive_kernels(ipython_dir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Manage local IPython kernels.")
-    parser.add_argument('-s', '--start', help='start new kernel', action='store_true')
-    parser.add_argument('-k', '--kill', help='terminate kernel', type=int)
-    parser.add_argument('-c', '--connect', help='connect to kernel', type=int)
+    parser.add_argument('-s', '--start',
+                        help='start new kernel with specified profile',
+                        metavar='PROFILE',
+                        type=str, nargs='?', const='default')
+    parser.add_argument('-k', '--kill',
+                        help='terminate kernel',
+                        metavar='KERNEL',
+                        type=int)
+    parser.add_argument('-c', '--connect',
+                        help='connect to kernel',
+                        metavar='KERNEL',
+                        type=int)
     parser.add_argument('-l', '--list', help='list running kernels', action='store_true')
     try:
         ipython_dir = os.environ['IPYTHONDIR']
@@ -97,9 +106,14 @@ if __name__ == '__main__':
             # Need to blank the arguments to prevent them from being used
             # by the kernel app instance:
             sys.argv[1:] = []
-            k = SilentIPKernelApp.instance()
-            k.initialize()
-            k.start()
+            SilentIPKernelApp.profile = args.start
+            try:
+                k = SilentIPKernelApp.instance()
+                k.initialize()
+                k.start()
+            except:
+                print 'error starting kernel'
+                sys.exit(1)
     elif args.kill is not None:
         kf_dict = get_alive_kernels(ipython_dir)
         try:
