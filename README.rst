@@ -30,6 +30,10 @@ Start a new kernel using the default IPython profile: ::
     
     ipyk -s
 
+Start a new kernel using a specific profile: ::
+
+    ipyk -s my_profile
+
 List running kernels: ::
 
     ipyk -l
