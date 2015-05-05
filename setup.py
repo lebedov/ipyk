@@ -34,7 +34,7 @@ CLASSIFIERS = [
     'Topic :: Software Development']
 
 if __name__ == "__main__":
-    if os.path.exists('MANIFEST'): 
+    if os.path.exists('MANIFEST'):
         os.remove('MANIFEST')
 
     setup(
