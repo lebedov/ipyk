@@ -13,9 +13,14 @@ import argparse
 import glob
 import os
 import time
+import IPython
 from IPython import start_ipython
-from IPython.kernel import BlockingKernelClient
-from IPython.kernel.zmq.kernelapp import IPKernelApp
+if IPython.version_info < (4, 0, 0):
+    from IPython.kernel import BlockingKernelClient
+    from IPython.kernel.zmq.kernelapp import IPKernelApp
+else:
+    from jupyter_client import BlockingKernelClient
+    from ipykernel.kernelapp import IPKernelApp
 from setproctitle import setproctitle
 import six.moves
 import sys
