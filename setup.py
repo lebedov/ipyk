@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 
 # Install setuptools if it isn't available:
 try:
@@ -37,6 +38,11 @@ if __name__ == "__main__":
     if os.path.exists('MANIFEST'):
         os.remove('MANIFEST')
 
+    install_requires = ['ipython>=2.2.0',
+                        'setproctitle',
+                        'six']
+    if sys.version_info < (3, 0):
+        install_requires += ['futures>=3.0']
     setup(
         name = NAME,
         version = VERSION,
@@ -48,7 +54,5 @@ if __name__ == "__main__":
         long_description = LONG_DESCRIPTION,
         url = URL,
         scripts = ['ipyk'],
-        install_requires = ['ipython>=2.2.0',
-                            'setproctitle',
-                            'six'],
+        install_requires = install_requires
     )

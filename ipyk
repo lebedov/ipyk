@@ -12,7 +12,10 @@ IPython local kernel management utility.
 import argparse
 import glob
 import os
+import sys
 import time
+
+from concurrent.futures import ThreadPoolExecutor
 import IPython
 from IPython import start_ipython
 if IPython.version_info < (4, 0, 0):
@@ -23,8 +26,6 @@ else:
     from ipykernel.kernelapp import IPKernelApp
 from setproctitle import setproctitle
 import six.moves
-import sys
-
 from six.moves.queue import Empty
 
 class SilentIPKernelApp(IPKernelApp):
@@ -55,23 +56,30 @@ def wait_for_kernel(kc, timeout=None):
             return False
     return True
 
-def get_alive_kernels(kernel_json_dir):
+def get_alive_kernels(kernel_json_dir, max_workers=5):
     # Look for kernel files:
     if IPython.version_info < (4, 0, 0):
         kernel_files = glob.glob(os.path.join(kernel_json_dir, '*', 'security', 'kernel*json'))
     else:
         kernel_files = glob.glob(os.path.join(kernel_json_dir, 'kernel*json'))
    
-    kf_dict = {}
-    for count, file_name in enumerate(kernel_files):
-        kc = BlockingKernelClient(connection_file=file_name)
-        kc.load_connection_file()
-        kc.start_channels()
-        kc.hb_channel.unpause()
+    def check_kernel(file_name):
+        # If an exception occurs for some reason, silently skip over the kernel file:
+        try:
+            kc = BlockingKernelClient(connection_file=file_name)
+            kc.load_connection_file()
+            kc.start_channels()
+            kc.hb_channel.unpause()
 
-        if wait_for_kernel(kc, kc.hb_channel.time_to_dead+1.0):
-            kf_dict[count] = {'file_name': file_name, 'kc': kc}
-    return kf_dict
+            if wait_for_kernel(kc, kc.hb_channel.time_to_dead+1.0):
+                return {'file_name': file_name, 'kc': kc}
+        except:
+            return None
+
+    with ThreadPoolExecutor(max_workers) as pool:
+        return {i:result for i, result in \
+                enumerate(pool.map(check_kernel, kernel_files)) \
+                if result is not None}
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Manage local IPython kernels.")
