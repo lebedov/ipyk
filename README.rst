@@ -43,6 +43,9 @@ Connect to a running kernel: ::
 
     ipyk -c 0
 
+After connecting to a running kernel, one can disconnect without killing the 
+kernel by typing ``Ctrl-\``.
+
 Terminate a running kernel: ::
 
     ipyk -k 0
