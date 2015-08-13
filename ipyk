@@ -110,7 +110,8 @@ if __name__ == '__main__':
         try:
             setproctitle('ipyk -c %s' % args.connect)
             start_ipython(['console', '--existing',
-                          str(kf_dict[args.connect]['file_name'])])
+                str(kf_dict[args.connect]['file_name']),
+                '--TerminalInteractiveShell.banner2=Type Ctrl-\ to disconnect from kernel.\n'])
         except KeyError:
             print('invalid kernel number')
             sys.exit(1)
