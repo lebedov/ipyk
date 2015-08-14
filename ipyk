@@ -81,6 +81,17 @@ def get_alive_kernels(kernel_json_dir, max_workers=5):
                 enumerate(pool.map(check_kernel, kernel_files)) \
                 if result is not None}
 
+def connect_to(n, kernel_json_dir):
+    kf_dict = get_alive_kernels(kernel_json_dir)
+    try:
+        setproctitle('ipyk -c %s' % n)
+        start_ipython(['console', '--existing',
+                       str(kf_dict[n]['file_name']),
+                       '--TerminalInteractiveShell.banner2=Type Ctrl-\ to disconnect from kernel.\n'])
+    except KeyError:
+        print('invalid kernel number')
+        sys.exit(1)
+    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Manage local IPython kernels.")
     parser.add_argument('-s', '--start',
@@ -114,15 +125,7 @@ if __name__ == '__main__':
         for k, v in six.iteritems(kf_dict):
             print('%s: %s' % (k, v['file_name']))
     elif args.connect is not None:
-        kf_dict = get_alive_kernels(kernel_json_dir)
-        try:
-            setproctitle('ipyk -c %s' % args.connect)
-            start_ipython(['console', '--existing',
-                str(kf_dict[args.connect]['file_name']),
-                '--TerminalInteractiveShell.banner2=Type Ctrl-\ to disconnect from kernel.\n'])
-        except KeyError:
-            print('invalid kernel number')
-            sys.exit(1)
+        connect_to(args.connect, kernel_json_dir)
     elif args.start:
         pid = os.fork()
         if pid == 0:
@@ -144,7 +147,6 @@ if __name__ == '__main__':
             msg_id = kf_dict[args.kill]['kc'].shutdown()
             reply = kf_dict[args.kill]['kc'].shell_channel.get_msg()
             if reply['content']['status'] == 'error':
-                print('error terminating kernel')
                 sys.exit(1)
         except KeyError:
             print('must specify valid kernel number')
