@@ -35,12 +35,13 @@ Start a new kernel using a specific profile: ::
     ipyk -s my_profile
 
 List running kernels; depending on the version of IPython you are using, the 
-kernel JSON files may be stored in different locations ::
+kernel JSON files may be stored in different locations: ::
 
     ipyk -l
     0: /run/user/1000/jupyter/kernel-12345.json
 
-Connect to a running kernel: ::
+Connect to a running kernel; note that the argument is the integer listed by 
+``ipyk -l``, not the process ID: ::
 
     ipyk -c 0
 
