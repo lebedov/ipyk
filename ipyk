@@ -4,7 +4,7 @@
 IPython local kernel management utility.
 """
 
-# Copyright (c) 2015, Lev Givon
+# Copyright (c) 2015-2016, Lev Givon
 # All rights reserved.
 # Distributed under the terms of the BSD license:
 # http://www.opensource.org/licenses/bsd-license
@@ -17,11 +17,12 @@ import time
 
 from concurrent.futures import ThreadPoolExecutor
 import IPython
-from IPython import start_ipython
 if IPython.version_info < (4, 0, 0):
+    from IPython import start_ipython
     from IPython.kernel import BlockingKernelClient
     from IPython.kernel.zmq.kernelapp import IPKernelApp
 else:
+    from jupyter_console.app import launch_new_instance as start_ipython
     from jupyter_client import BlockingKernelClient
     from ipykernel.kernelapp import IPKernelApp
 from setproctitle import setproctitle
@@ -139,7 +140,7 @@ if __name__ == '__main__':
                 k.initialize()
                 k.start()
             except:
-                print 'error starting kernel'
+                print('error starting kernel')
                 sys.exit(1)
     elif args.kill is not None:
         kf_dict = get_alive_kernels(kernel_json_dir)

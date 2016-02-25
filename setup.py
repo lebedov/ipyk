@@ -14,7 +14,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 NAME =               'ipyk'
-VERSION =            '0.1.3'
+VERSION =            '0.1.4'
 AUTHOR =             'Lev Givon'
 AUTHOR_EMAIL =       'lev@columbia.edu'
 URL =                'https://github.com/lebedov/ipyk/'
