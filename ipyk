@@ -22,6 +22,7 @@ if IPython.version_info < (4, 0, 0):
     from IPython.kernel import BlockingKernelClient
     from IPython.kernel.zmq.kernelapp import IPKernelApp
 else:
+    from jupyter_core.paths import jupyter_runtime_dir
     from jupyter_console.app import launch_new_instance as start_ipython
     from jupyter_client import BlockingKernelClient
     from ipykernel.kernelapp import IPKernelApp
@@ -63,7 +64,7 @@ def get_alive_kernels(kernel_json_dir, max_workers=5):
         kernel_files = glob.glob(os.path.join(kernel_json_dir, '*', 'security', 'kernel*json'))
     else:
         kernel_files = glob.glob(os.path.join(kernel_json_dir, 'kernel*json'))
-   
+
     def check_kernel(file_name):
         # If an exception occurs for some reason, silently skip over the kernel file:
         try:
@@ -92,7 +93,7 @@ def connect_to(n, kernel_json_dir):
     except KeyError:
         print('invalid kernel number')
         sys.exit(1)
-    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Manage local IPython kernels.")
     parser.add_argument('-s', '--start',
@@ -115,11 +116,7 @@ if __name__ == '__main__':
             kernel_json_dir = '~/.ipython'
         kernel_json_dir = os.path.expanduser(kernel_json_dir)
     else:
-        try:
-            kernel_json_dir = os.environ['JUPYTER_RUNTIME_DIR']
-        except:
-            kernel_json_dir = os.path.join(os.environ['XDG_RUNTIME_DIR'],
-                                           'jupyter')
+        kernel_json_dir = jupyter_runtime_dir()
     args = parser.parse_args()
     if args.list:
         kf_dict = get_alive_kernels(kernel_json_dir)
