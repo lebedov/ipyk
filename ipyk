@@ -79,9 +79,10 @@ def get_alive_kernels(kernel_json_dir, max_workers=5):
             return None
 
     with ThreadPoolExecutor(max_workers) as pool:
-        return {i:result for i, result in \
-                enumerate(pool.map(check_kernel, kernel_files)) \
-                if result is not None}
+        # Map consecutive integers starting with 0 to live kernels:
+        live_kernels = [r for r in pool.map(check_kernel, kernel_files) \
+                        if r is not None]
+        return {i:k for i, k in enumerate(live_kernels)}
 
 def connect_to(n, kernel_json_dir):
     kf_dict = get_alive_kernels(kernel_json_dir)
