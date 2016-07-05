@@ -10,7 +10,9 @@ IPyk is a command line utility for managing locally run IPython kernels.
 .. image:: https://img.shields.io/pypi/v/ipyk.svg
     :target: https://pypi.python.org/pypi/ipyk
     :alt: Latest Version
-.. image:: https://img.shields.io/pypi/dm/ipyk.svg
+.. Uncomment after pypi is migrated to warehouse and stats are re-enabled:
+.. https://github.com/badges/shields/issues/716
+.. .. image:: https://img.shields.io/pypi/dm/ipyk.svg
     :target: https://pypi.python.org/pypi/ipyk
     :alt: Downloads
 
