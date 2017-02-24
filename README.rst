@@ -56,14 +56,14 @@ Terminate a running kernel: ::
 
 Author
 ------
-See the included `AUTHORS.rst`_ file for more information.
+See the included `AUTHORS.rst
+<https://github.com/lebedov/ipyk/blob/master/AUTHORS.rst>`_ file for more
+information.
 
-.. _AUTHORS.rst: AUTHORS.rst
 
 License
 -------
-This software is licensed under the
-`BSD License <http://www.opensource.org/licenses/bsd-license>`_.
-See the included `LICENSE.rst`_ file for more information.
-
-.. _LICENSE.rst: LICENSE.rst
+This software is licensed under the `BSD License
+<http://www.opensource.org/licenses/bsd-license>`_.  See the included
+`LICENSE.rst <https://github.com/lebedov/ipyk/blob/master/LICENSE.rst>`_ file
+for more information.
