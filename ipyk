@@ -90,7 +90,7 @@ def connect_to(n, kernel_json_dir):
         setproctitle('ipyk -c %s' % n)
         start_ipython(['console', '--existing',
                        str(kf_dict[n]['file_name']),
-                       '--TerminalInteractiveShell.banner2=Type Ctrl-\ to disconnect from kernel.\n'])
+                       '--TerminalInteractiveShell.banner2=Run `quit(keep_kernel=True)` to disconnect from kernel.\n'])
     except KeyError:
         print('invalid kernel number')
         sys.exit(1)
