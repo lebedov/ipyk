@@ -48,7 +48,7 @@ Connect to a running kernel; note that the argument is the integer listed by
     ipyk -c 0
 
 After connecting to a running kernel, one can disconnect without killing the 
-kernel by typing ``Ctrl-\``.
+kernel by running ``quit(keep_kernel=True)``.
 
 Terminate a running kernel: ::
 
