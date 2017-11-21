@@ -4,7 +4,7 @@
 IPython local kernel management utility.
 """
 
-# Copyright (c) 2015-2016, Lev Givon
+# Copyright (c) 2015-2017, Lev E. Givon
 # All rights reserved.
 # Distributed under the terms of the BSD license:
 # http://www.opensource.org/licenses/bsd-license
@@ -17,15 +17,10 @@ import time
 
 from concurrent.futures import ThreadPoolExecutor
 import IPython
-if IPython.version_info < (4, 0, 0):
-    from IPython import start_ipython
-    from IPython.kernel import BlockingKernelClient
-    from IPython.kernel.zmq.kernelapp import IPKernelApp
-else:
-    from jupyter_core.paths import jupyter_runtime_dir
-    from jupyter_console.app import launch_new_instance as start_ipython
-    from jupyter_client import BlockingKernelClient
-    from ipykernel.kernelapp import IPKernelApp
+from ipykernel.kernelapp import IPKernelApp
+from jupyter_client import BlockingKernelClient
+from jupyter_core.paths import jupyter_runtime_dir
+from jupyter_console.app import launch_new_instance as start_ipython
 from setproctitle import setproctitle
 import six.moves
 from six.moves.queue import Empty
@@ -60,10 +55,7 @@ def wait_for_kernel(kc, timeout=None):
 
 def get_alive_kernels(kernel_json_dir, max_workers=5):
     # Look for kernel files:
-    if IPython.version_info < (4, 0, 0):
-        kernel_files = glob.glob(os.path.join(kernel_json_dir, '*', 'security', 'kernel*json'))
-    else:
-        kernel_files = glob.glob(os.path.join(kernel_json_dir, 'kernel*json'))
+    kernel_files = glob.glob(os.path.join(kernel_json_dir, 'kernel*json'))
 
     def check_kernel(file_name):
         # If an exception occurs for some reason, silently skip over the kernel file:
@@ -110,14 +102,7 @@ if __name__ == '__main__':
                         metavar='KERNEL',
                         type=int, nargs='?', const=0)
     parser.add_argument('-l', '--list', help='list running kernels', action='store_true')
-    if IPython.version_info < (4, 0, 0):
-        try:
-            kernel_json_dir = os.environ['IPYTHONDIR']
-        except:
-            kernel_json_dir = '~/.ipython'
-        kernel_json_dir = os.path.expanduser(kernel_json_dir)
-    else:
-        kernel_json_dir = jupyter_runtime_dir()
+    kernel_json_dir = jupyter_runtime_dir()
     args = parser.parse_args()
     if args.list:
         kf_dict = get_alive_kernels(kernel_json_dir)

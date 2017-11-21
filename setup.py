@@ -8,7 +8,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 NAME =               'ipyk'
-VERSION =            '0.1.4.1'
+VERSION =            '0.1.4.2'
 AUTHOR =             'Lev Givon'
 AUTHOR_EMAIL =       'lev@columbia.edu'
 URL =                'https://github.com/lebedov/ipyk/'
@@ -34,7 +34,10 @@ if __name__ == "__main__":
     if os.path.exists('MANIFEST'):
         os.remove('MANIFEST')
 
-    install_requires = ['ipython>=2.2.0',
+    install_requires = ['ipython>=4.0.0',
+                        'ipykernel>=4.0.0',
+                        'jupyter_client>=4.0.0',
+                        'jupyter_core>=4.0.0',
                         'setproctitle',
                         'six']
     if sys.version_info < (3, 0):
